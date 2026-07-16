@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Demandas Tech</title>
+    <!-- Estilos embutidos para centralizar toda a apresentação visual do portal -->
+    <style>
+        /* RESET & VARIAVEIS: Define padrões globais e paleta de cores moderna */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --accent: #10b981;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* HEADER: Utiliza Flexbox para distribuir o logotipo e a navegação nas extremidades */
+        .header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.25rem 2rem;
+            display: flex; /* Alinha logo e menu horizontalmente */
+            justify-content: space-between; /* Empurra os itens para os lados opostos */
+            align-items: center; /* Centraliza verticalmente os itens */
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--dark);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem; /* Espaçamento constante entre os links do menu */
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        /* HERO SECTION: Banner principal de boas-vindas */
+        .hero {
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            color: var(--white);
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: #cbd5e1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* MAIN CONTENT: Área principal do site */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Linha decorativa abaixo do título da seção */
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* JOBS GRID: Container Flexbox flexível para cartões de vagas */
+        .jobs-grid {
+            display: flex;
+            flex-wrap: wrap; /* Permite que os cartões quebrem para a próxima linha */
+            gap: 2rem; /* Espaçamento igualitário em todas as direções entre os cards */
+        }
+
+        /* CARD: Representação visual individual de cada vaga */
+        .job-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            flex: 1 1 calc(33.333% - 1.34rem); /* Ocupa 1/3 do container menos o espaço do gap */
+            min-width: 280px; /* Impede que o card esmague demais em telas pequenas */
+            display: flex;
+            flex-direction: column; /* Organiza os elementos do card de cima para baixo */
+            justify-content: space-between; /* Garante que o botão de ação fique sempre na base */
+            transition: var(--transition);
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px); /* Efeito suave de levitação */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-color: #cbd5e1;
+        }
+
+        /* Seção escondida por padrão para o recurso "Ver Mais" */
+        .extra-jobs {
+            display: none; /* Escondido inicialmente */
+            width: 100%;
+        }
+
+        /* Alvo para quando o botão "Ver Mais" for clicado (simulação via CSS :target) */
+        #more-jobs:target {
+            display: block;
+        }
+
+        /* Estilização interna dos Cards */
+        .job-badge {
+            background-color: #eff6ff;
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            align-self: flex-start; /* Impede que a badge estique horizontalmente */
+            margin-bottom: 1rem;
+        }
+
+        .job-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+        }
+
+        .job-description {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1; /* Preenche o espaço vertical restante */
+        }
+
+        .job-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--gray);
+            border-top: 1px solid #f1f5f9;
+            padding-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* FORMULÁRIOS SECTION: Alinhamento e estilo integrados ao layout corporativo */
+        .formularios-container {
+            display: flex;
+            flex-wrap: wrap; /* Permite que os formulários quebrem de linha em telas pequenas */
+            gap: 2rem;
+            justify-content: space-between;
+            margin: 4rem auto 0 auto;
+            max-width: 1200px;
+        }
+
+        /* Estilização dos blocos de formulário simulando pequenos painéis (Cards) */
+        .form-get, .form-post {
+            flex: 1;
+            min-width: 300px; /* Garante usabilidade em telas mobile */
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .formularios-container h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        /* Inputs modernos com focus ring integrado para melhor acessibilidade */
+        .form-get input, .form-post input {
+            display: block;
+            width: 100%;
+            margin-bottom: 1.25rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: var(--light);
+            color: var(--dark);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-get input:focus, .form-post input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); /* Soft glow azul */
+        }
+
+        /* Padronização dos botões internos com o design system */
+        .form-get button, .form-post button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* Diferenciação sutil nos CTAs das duas ações (Pesquisa vs Login) */
+        .form-get button {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .form-get button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .form-post button {
+            background-color: var(--dark);
+            color: var(--white);
+        }
+
+        .form-post button:hover {
+            background-color: #1e293b;
+        }
+
+        /* BUTTONS: Regras para CTAs gerais */
+        .btn {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.75rem 2rem;
+            margin: 3rem auto 0 auto;
+            display: block;
+            width: fit-content;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        /* FOOTER: Rodapé básico com Flexbox */
+        .footer {
+            background-color: var(--dark);
+            color: #94a3b8;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        /* RESPONSIVIDADE: Ajuste automático para tablets e smartphones */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column; /* Alinha logo e menu em coluna no mobile */
+                gap: 1rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .job-card {
+                flex: 1 1 100%; /* Cartões ocupam 100% da largura em telas menores */
+            }
+
+            .formularios-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TAG <header>: Semântica para o cabeçalho/área de navegação global do portal -->
+    <header class="header">
+        <div class="header-container">
+            <a href="#" class="logo">Portal<span>DemandasTech</span></a>
+            <!-- TAG <nav>: Define um bloco de links de navegação principal do sistema -->
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link">Início</a></li>
+                    <li><a href="#vagas" class="nav-link">Demandas</a></li>
+                    <li><a href="#" class="nav-link">Sobre</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- TAG <section>: Bloco temático representando a introdução (Hero) do portal corporativo -->
+    <section class="hero">
+        <h1 class="hero-title">Oportunidades e Projetos Tech</h1>
+        <p class="hero-subtitle">Encontre e candidate-se às demandas ativas do nosso ecossistema de desenvolvimento e infraestrutura.</p>
+    </section>
+
+    <!-- TAG <main>: Indica o conteúdo principal e exclusivo do documento HTML -->
+    <main class="main-content" id="vagas">
+        <h2 class="section-title">Demandas em Destaque</h2>
+
+        <!-- Container Flexbox contendo os 3 cards iniciais -->
+        <div class="jobs-grid">
+            
+            <!-- TAG <article>: Representa uma composição autônoma (neste caso, uma vaga/demanda) -->
+            <!-- CARD 1 -->
+            <article class="job-card">
+                <div>
+                    <span class="job-badge">Frontend</span>
+                    <h3 class="job-title">Desenvolvedor React Sênior</h3>
+                    <p class="job-description">Responsável pela arquitetura de um novo Design System integrado com microsserviços e Next.js.</p>
+                </div>
+                <div>
+                    <div class="job-meta">
+                        <span>📍 Remoto</span>
+                        <span>💰 R$ 14.000,00</span>
+                    </div>
+                    <a href="#" class="btn btn-primary">Candidatar-se</a>
+                </div>
+            </article>
+
+            <!-- CARD 2 -->
+            <article class="job-card">
+                <div>
+                    <span class="job-badge">Data Science</span>
+                    <h3 class="job-title">Engenheiro de Dados Pleno</h3>
+                    <p class="job-description">Modelagem de pipelines ETL robustos utilizando Spark, Databricks e orquestração via Airflow.</p>
+                </div>
+                <div>
+                    <div class="job-meta">
+                        <span>📍 Híbrido (SP)</span>
+                        <span>💰 R$ 11.500,00</span>
+                    </div>
+                    <a href="#" class="btn btn-primary">Candidatar-se</a>
+                </div>
+            </article>
+
+            <!-- CARD 3 -->
+            <article class="job-card">
+                <div>
+                    <span class="job-badge">DevOps</span>
+                    <h3 class="job-title">Especialista Cloud & DevOps</h3>
+                    <p class="job-description">Migração de arquitetura legada para Kubernetes (EKS) focando em escalabilidade e segurança na AWS.</p>
+                </div>
+                <div>
+                    <div class="job-meta">
+                        <span>📍 Remoto</span>
+                        <span>💰 R$ 16.000,00</span>
+                    </div>
+                    <a href="#" class="btn btn-primary">Candidatar-se</a>
+                </div>
+            </article>
+        </div>
+
+        <!-- Seção oculta "Ver Mais" contendo mais 3 vagas simuladas. 
+             Ao clicar no botão, a URL ganha a âncora #more-jobs e o CSS altera o display desta div -->
+        <div id="more-jobs" class="extra-jobs">
+            <div class="jobs-grid" style="margin-top: 2rem;">
+                
+                <!-- CARD EXTRA 1 -->
+                <article class="job-card">
+                    <div>
+                        <span class="job-badge">Mobile</span>
+                        <h3 class="job-title">Dev Flutter Sênior</h3>
+                        <p class="job-description">Desenvolvimento do novo aplicativo financeiro multiplataforma, prezando pela segurança e performance nativa.</p>
+                    </div>
+                    <div>
+                        <div class="job-meta">
+                            <span>📍 Remoto</span>
+                            <span>💰 R$ 13.000,00</span>
+                        </div>
+                        <a href="#" class="btn btn-primary">Candidatar-se</a>
+                    </div>
+                </article>
+
+                <!-- CARD EXTRA 2 -->
+                <article class="job-card">
+                    <div>
+                        <span class="job-badge">Backend</span>
+                        <h3 class="job-title">Desenvolvedora Java / Spring</h3>
+                        <p class="job-description">Manutenção e evolução de APIs REST de alta performance construídas sob arquitetura de microsserviços.</p>
+                    </div>
+                    <div>
+                        <div class="job-meta">
+                            <span>📍 Híbrido (RJ)</span>
+                            <span>💰 R$ 10.500,00</span>
+                        </div>
+                        <a href="#" class="btn btn-primary">Candidatar-se</a>
+                    </div>
+                </article>
+
+                <!-- CARD EXTRA 3 -->
+                <article class="job-card">
+                    <div>
+                        <span class="job-badge">Segurança</span>
+                        <h3 class="job-title">Analista de SecOps Sênior</h3>
+                        <p class="job-description">Liderar testes de intrusão, auditorias de segurança no código e implantação de práticas DevSecOps no fluxo CI/CD.</p>
+                    </div>
+                    <div>
+                        <div class="job-meta">
+                            <span>📍 Remoto</span>
+                            <span>💰 R$ 15.500,00</span>
+                        </div>
+                        <a href="#" class="btn btn-primary">Candidatar-se</a>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- Botão "Ver Mais" que direciona via âncora para ativar a renderização do bloco extra no CSS -->
+        <a href="#more-jobs" class="btn btn-outline" id="load-more-btn">Ver Mais Oportunidades</a>
+
+        <!-- TAG <section>: Separador lógico para os formulários de operações de busca e credenciamento -->
+        <section class="formularios-container">
+
+            <!-- 1. Formulário de Filtro Rápido (GET) 
+                 Método GET é semântico para buscas e consultas seguras e idempotentes -->
+            <form action="index.html" method="GET" class="form-get">
+                <h3>Filtro Rápido de Demandas</h3>
+                <input type="text" name="busca.tecnologia" placeholder="Filtrar por Python, Docker...">
+                <button type="submit">Pesquisar Vagas</button>
+            </form>
+
+            <!-- 2. Formulário de Portal de Acesso do Consultor (POST) 
+                 Método POST ideal para autenticação e envio de dados confidenciais (email e token) -->
+            <form action="index.html" method="POST" class="form-post">
+                <h3>Portal de Acesso do Consultor</h3>
+                <input type="email" name="email.dev" placeholder="E-mail Corporativo" required>
+                <input type="password" name="token_acesso" placeholder="Digite seu token de acesso" required>
+                <button type="submit">Acessar Portal</button>
+            </form>
+
+        </section>
+        <!-- ======================================= -->
+
+    </main>
+
+    <!-- TAG <footer>: Define o rodapé do site, contendo avisos legais e informações do portal corporativo -->
+    <footer class="footer">
+        <p>&copy; 2026 Portal de Demandas Tech. Todos os direitos reservados para a área de Tecnologia.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,4 +1,5 @@
 markdown
 
 # Miniprojeto: Portal Tech de Demandas e Vagas
-*Integrante: Marcondes Alencar.*
+*Integrante 1: Marcondes Alencar .*
+*Integrante 2: vinicius braga dos santos .*
